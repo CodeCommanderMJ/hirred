@@ -1,0 +1,50 @@
+import { getMyJobs } from "@/api/apiJobs";
+import useFetch from "@/hooks/use-fetch";
+import { useUser } from "@clerk/clerk-react";
+import { BarLoader } from "react-spinners";
+import JobCard from "./job-card";
+import { useEffect } from "react";
+
+const CreatedJobs = () => {
+  const { user, isLoaded } = useUser();
+
+  const {
+    loading: loadingCreatedJobs,
+    data: createdJobs,
+    fn: fnCreatedJobs,
+  } = useFetch(getMyJobs, {
+    recruiter_id: user?.id,
+  });
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      fnCreatedJobs();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, user]);
+
+  if (!isLoaded || loadingCreatedJobs) {
+    return <BarLoader className="mt-4" width="100%" color="#36d7b7" />;
+  }
+
+  return (
+    <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {createdJobs?.length ? (
+        createdJobs.map((job) => (
+          <JobCard
+            key={job.id}
+            job={job}
+            onJobAction={fnCreatedJobs}
+            isMyJob
+          />
+        ))
+      ) : (
+        <div className="text-gray-500 text-center col-span-full">
+          No jobs posted yet 😢
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CreatedJobs;
