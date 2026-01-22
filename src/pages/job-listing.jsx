@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { getCompanies } from "@/api/apiCompanies";
+import { getCompanies, addNewCompany } from "../api/apiCompanies";
 import { getJobs } from "@/api/apiJobs";
 
 const JobListing = () => {
